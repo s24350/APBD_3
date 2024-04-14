@@ -8,7 +8,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddControllers();
 
-builder.
+//builder.Services.AddScoped<Interface, Klasa>
 
 
 var app = builder.Build();
