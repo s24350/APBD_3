@@ -18,7 +18,12 @@ namespace APBD_3.Controllers
         [HttpGet]
         public IActionResult GetOrderedAnimals(string orderBy = "Name")
         {
-            return Ok(_animalService.GetAnimals(orderBy));
+            var animals = _animalService.GetAnimals(orderBy);
+            if (animals == null)
+            {
+                return BadRequest();
+            }
+            return Ok(animals);
         }
     }
 }

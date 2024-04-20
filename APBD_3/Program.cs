@@ -1,5 +1,6 @@
 using APBD_3.Repositories;
 using APBD_3.Services;
+using APBD_3.Validators;
 
 public class Program
 {
@@ -19,6 +20,7 @@ public class Program
         //builder.Services.AddScoped<Interface, Klasa>
         builder.Services.AddScoped<IAnimalService, AnimalService>();
         builder.Services.AddScoped<IAnimalRepository, AnimalRepository>();
+        builder.Services.AddScoped<IColumnNameValidator, ColumnNameValidator>();
 
         var app = builder.Build();
 

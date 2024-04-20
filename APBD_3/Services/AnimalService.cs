@@ -32,7 +32,8 @@ namespace APBD_3.Services
                 };
                 animalsForController.Add(animalDTO);
             }
-            return animalsForController;
+            //sorting by column occures here
+            return animalsForController.OrderBy(animal=>animal.GetType().GetProperty(orderBy).GetValue(animal));
         }
 
 
