@@ -1,5 +1,7 @@
 ﻿using APBD_3.DTO;
+using APBD_3.Models;
 using APBD_3.Repositories;
+using Microsoft.AspNetCore.Mvc;
 
 namespace APBD_3.Services
 {
@@ -36,6 +38,19 @@ namespace APBD_3.Services
             return animalsForController.OrderBy(animal=>animal.GetType().GetProperty(orderBy).GetValue(animal));
         }
 
+        public int PostAnimal(AnimalDTO animalDTO)
+        {
+            Animal animal = new()
+            {
+                IdAnimal = (_animalRepository.GetCount()+1),
+                Name = animalDTO.Name,
+                Description = animalDTO.Description,
+                Area = animalDTO.Area,
+                Category = animalDTO.Category
+            };
+            return _animalRepository.PostAnimal(animal);
+        }
 
+        
     }
 }

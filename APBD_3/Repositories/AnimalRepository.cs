@@ -1,5 +1,6 @@
 ﻿using APBD_3.Models;
 using APBD_3.Validators;
+using System.Collections.Generic;
 using System.Data.SqlClient;
 
 // Repository is responsible for communicating with DB
@@ -52,6 +53,33 @@ namespace APBD_3.Repositories
                 animals.Add(row);
             }
             return animals;
+        }
+
+        public int GetCount() {
+            using var con = new SqlConnection(_configuration.GetConnectionString("DefaultConnection"));
+            con.Open();
+            using var cmd = new SqlCommand();
+            cmd.Connection = con;
+            cmd.CommandText = "SELECT Count(1) FROM Animals";
+            int count = (int) cmd.ExecuteScalar();
+            return count;
+        }
+
+        public int PostAnimal(Animal animal)
+        {
+            using var con = new SqlConnection(_configuration.GetConnectionString("DefaultConnection"));
+            con.Open();
+            using var cmd = new SqlCommand();
+            cmd.Connection = con;
+            cmd.CommandText = "INSERT INTO Animals VALUES(@Name,@Description,@Category,@Area)";
+            cmd.Parameters.AddWithValue("@Id", animal.IdAnimal);
+            cmd.Parameters.AddWithValue("@Name", animal.Name);
+            cmd.Parameters.AddWithValue("@Description", animal.Description);
+            cmd.Parameters.AddWithValue("@Category", animal.Category);
+            cmd.Parameters.AddWithValue("@Area", animal.Area);
+
+            var affectedCount = cmd.ExecuteNonQuery();
+            return affectedCount;
         }
     }
 }
