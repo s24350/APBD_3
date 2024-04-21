@@ -31,8 +31,30 @@ namespace APBD_3.Controllers
         [HttpPost]
         public ActionResult<Animal> CreateAnimal(AnimalDTO animal)
         {
-            _animalService.PostAnimal(animal);
+            _animalService.PostAnimal(animal,Enums.PostType.postNew);
             return StatusCode(StatusCodes.Status201Created);
+        }
+
+        [HttpPut("{idAnimal:int}")]
+        public IActionResult UpdateAnimal(int idAnimal, AnimalDTO animalDTO)
+        {
+            var returnVal = _animalService.UpdateAnimal(idAnimal,animalDTO);
+            if (returnVal == 0)
+            {
+                return NotFound();
+            }
+            return NoContent();
+        }
+
+        [HttpDelete("{idAnimal:int}")]
+        public IActionResult DeleteAnimal(int idAnimal)
+        {
+            var returnVal = _animalService.DeleteAnimal(idAnimal);
+            if (returnVal == 0)
+            {
+                return NotFound();
+            }
+            return NoContent();
         }
     }
 }

@@ -1,6 +1,8 @@
 ﻿using APBD_3.DTO;
+using APBD_3.Enums;
 using APBD_3.Models;
 using APBD_3.Repositories;
+using APBD_3.Validators;
 using Microsoft.AspNetCore.Mvc;
 
 namespace APBD_3.Services
@@ -12,9 +14,11 @@ namespace APBD_3.Services
     {
 
         private readonly IAnimalRepository _animalRepository;
+        private IIndexValidator _indexValidator;
 
-        public AnimalService(IAnimalRepository animalRepository) {
+        public AnimalService(IAnimalRepository animalRepository, IIndexValidator indexValidator) {
             this._animalRepository = animalRepository;
+            this._indexValidator = indexValidator;
         }
 
         public IEnumerable<AnimalDTO> GetAnimals(string orderBy)
@@ -38,11 +42,16 @@ namespace APBD_3.Services
             return animalsForController.OrderBy(animal=>animal.GetType().GetProperty(orderBy).GetValue(animal));
         }
 
-        public int PostAnimal(AnimalDTO animalDTO)
+        public int PostAnimal(AnimalDTO animalDTO, PostType postType)
         {
+            int adder = 0;
+            if (postType == PostType.postNew)
+            {
+                adder++;
+            }
             Animal animal = new()
             {
-                IdAnimal = (_animalRepository.GetCount()+1),
+                IdAnimal = (_animalRepository.GetMaxId()+adder),
                 Name = animalDTO.Name,
                 Description = animalDTO.Description,
                 Area = animalDTO.Area,
@@ -51,6 +60,30 @@ namespace APBD_3.Services
             return _animalRepository.PostAnimal(animal);
         }
 
-        
+        public int UpdateAnimal(int idAnimal, AnimalDTO animalDTO)
+        {
+            if (!_animalRepository.GetExistingIds().Contains(idAnimal)){
+                return 0;
+            }
+            
+            Animal animalForDatabase = new()
+            {
+                IdAnimal = idAnimal,
+                Name = animalDTO.Name,
+                Description = animalDTO.Description,
+                Area = animalDTO.Area,
+                Category = animalDTO.Category
+            };
+            return _animalRepository.UpdateAnimal(animalForDatabase);
+        }
+
+        public int DeleteAnimal(int idAnimal)
+        {
+            
+            if (_indexValidator.IsIndexInAnimalsTable(idAnimal, _animalRepository.GetExistingIds())){
+                return _animalRepository.DeleteAnimal(idAnimal);
+            }
+            return 0;
+        }
     }
 }

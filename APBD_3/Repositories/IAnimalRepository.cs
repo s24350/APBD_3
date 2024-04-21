@@ -6,8 +6,15 @@ namespace APBD_3.Repositories
     {
         public IEnumerable<Animal> GetAnimals(string orderBy);
 
-        public int GetCount();
+        public int GetMaxId();
 
         public int PostAnimal(Animal animal);
+
+        public Animal GetAnimalById(int idAnimal);
+
+        public int UpdateAnimal(Animal animal);
+        public int DeleteAnimal(int idAnimal);
+
+        public List<int> GetExistingIds();
     }
 }

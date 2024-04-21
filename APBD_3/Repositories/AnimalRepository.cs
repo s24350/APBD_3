@@ -1,4 +1,5 @@
-﻿using APBD_3.Models;
+﻿using APBD_3.Enums;
+using APBD_3.Models;
 using APBD_3.Validators;
 using System.Collections.Generic;
 using System.Data.SqlClient;
@@ -55,12 +56,12 @@ namespace APBD_3.Repositories
             return animals;
         }
 
-        public int GetCount() {
+        public int GetMaxId() {
             using var con = new SqlConnection(_configuration.GetConnectionString("DefaultConnection"));
             con.Open();
             using var cmd = new SqlCommand();
             cmd.Connection = con;
-            cmd.CommandText = "SELECT Count(1) FROM Animals";
+            cmd.CommandText = "SELECT MAX(Id) FROM Animals";
             int count = (int) cmd.ExecuteScalar();
             return count;
         }
@@ -80,6 +81,74 @@ namespace APBD_3.Repositories
 
             var affectedCount = cmd.ExecuteNonQuery();
             return affectedCount;
+        }
+
+        public Animal GetAnimalById(int idAnimal)
+        {
+            using var con = new SqlConnection(_configuration.GetConnectionString("DefaultConnection"));
+            con.Open();
+            using var cmd = new SqlCommand();
+            cmd.Connection = con;
+            cmd.CommandText = "SELECT Name, Description, Category, Area FROM Animals WHERE Id=@IdAnimal";
+            cmd.Parameters.AddWithValue("@IdAnimal", idAnimal);
+            var dr = cmd.ExecuteReader();
+            dr.Read();
+            return new Animal
+            {
+                IdAnimal = idAnimal,
+                Name = dr["Name"].ToString(),
+                Description = dr["Description"].ToString(),
+                Category = dr["Category"].ToString(),
+                Area = dr["Area"].ToString()
+            }; 
+        }
+
+        public int UpdateAnimal(Animal animal)
+        {
+            using var con = new SqlConnection(_configuration.GetConnectionString("DefaultConnection"));
+            con.Open();
+            using var cmd = new SqlCommand();
+            cmd.Connection = con;
+            cmd.CommandText = "UPDATE Animals SET Name=@Name,Description=@Description,Category=@Category,Area=@Area WHERE Id=@Id";
+            cmd.Parameters.AddWithValue("@Id", animal.IdAnimal);
+            cmd.Parameters.AddWithValue("@Name", animal.Name);
+            cmd.Parameters.AddWithValue("@Description", animal.Description);
+            cmd.Parameters.AddWithValue("@Category", animal.Category);
+            cmd.Parameters.AddWithValue("@Area", animal.Area);
+
+            var affectedCount = cmd.ExecuteNonQuery();
+            return affectedCount;
+        }
+
+        public int DeleteAnimal(int idAnimal)
+        {
+            using var con = new SqlConnection(_configuration.GetConnectionString("DefaultConnection"));
+            con.Open();
+            using var cmd = new SqlCommand();
+            cmd.Connection = con;
+            cmd.CommandText = "DELETE FROM Animals WHERE Id = @IdAnimal";
+            cmd.Parameters.AddWithValue("@IdAnimal", idAnimal);
+
+            var affectedCount = cmd.ExecuteNonQuery();
+            return affectedCount;
+        }
+
+        public List<int> GetExistingIds()
+        {
+            using var con = new SqlConnection(_configuration.GetConnectionString("DefaultConnection"));
+            con.Open();
+            using var cmd = new SqlCommand();
+            cmd.Connection = con;
+            cmd.CommandText = "SELECT Id FROM Animals";
+            var dr = cmd.ExecuteReader();
+
+            List<int> ids = new List<int>();
+
+            while (dr.Read())
+            {
+                ids.Add((int)dr["Id"]);
+            }
+            return ids;
         }
     }
 }

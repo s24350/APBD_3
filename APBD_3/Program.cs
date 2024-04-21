@@ -21,6 +21,7 @@ public class Program
         builder.Services.AddScoped<IAnimalService, AnimalService>();
         builder.Services.AddScoped<IAnimalRepository, AnimalRepository>();
         builder.Services.AddScoped<IColumnNameValidator, ColumnNameValidator>();
+        builder.Services.AddScoped<IIndexValidator, IndexValidator>();
 
         var app = builder.Build();
 

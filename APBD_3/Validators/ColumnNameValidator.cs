@@ -3,10 +3,10 @@
     public class ColumnNameValidator : IColumnNameValidator
     {
        
-        private static List<string> _columns = new List<string> {"id", "name", "description", "category", "area"};
+        private static List<string> _columns = new List<string> {"Id", "Name", "Description", "Category", "Area"};
 
         public bool Validate(string columnName) {
-            return _columns.Contains(columnName.ToLower());
+            return _columns.Contains(columnName);
         }
     }
 }
